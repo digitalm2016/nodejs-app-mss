@@ -1,0 +1,26 @@
+version: 0.2
+env:
+  #variables:
+  parameter-store:
+    DOCKER_REGISTRY_USERNAME: /mavenapp/docker-credentials/username
+    DOCKER_REGISTRY_PASSWORD: /mavenapp/docker-credentials/password
+    DOCKER_REGISTRY_URL: /mavenapp/docker-credentials/url
+    
+    
+phases:
+  install:
+    commands:
+      - echo "installing node"
+    runtime-versions:
+      nodejs: 12
+  build:
+    commands:
+      - echo "building docker image"
+      - docker build -t "$DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_USERNAME/nodejs-app-mss:latest" .
+      - docker login -u "$DOCKER_REGISTRY_USERNAME" -p "$DOCKER_REGISTRY_PASSWORD"
+      - docker push "$DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_USERNAME/nodejs-app-mss:latest"
+  post_build:
+    commands:
+      - echo "build is successful"
+      
+      # - echo "Hello World"
